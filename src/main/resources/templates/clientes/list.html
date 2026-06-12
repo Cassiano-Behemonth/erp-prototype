@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::#main-content})}">
+<head>
+    <title>Clientes - Piston & Wood</title>
+</head>
+<body>
+    <div id="main-content">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold font-numeric text-white tracking-wider">CLIENTES & VEÍCULOS</h1>
+                <p class="text-xs text-gray-400 mt-1">Cadastro e controle de clientes atendidos e seus respectivos automóveis.</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="/clientes/novo" class="inline-flex items-center space-x-2 bg-gradient-to-r from-brand-orange to-brand-neon hover:from-brand-darkOrange hover:to-brand-orange text-black font-semibold text-xs px-4 py-2.5 rounded-lg shadow-lg font-numeric tracking-wide transition-all duration-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                    <span>Novo Cliente</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- CLIENTS TABLE CARD -->
+        <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-brand-border flex items-center justify-between">
+                <h3 class="text-sm font-semibold font-numeric tracking-wider text-white">LISTAGEM DE CLIENTES</h3>
+                <span class="text-xs font-mono text-brand-neon" th:text="${clientes.size() + ' registrados'}">0 registrados</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-300">
+                    <thead class="bg-neutral-900/50 text-[10px] uppercase font-numeric tracking-wider border-b border-brand-border text-gray-400">
+                        <tr>
+                            <th class="px-4 py-3 whitespace-nowrap">ID</th>
+                            <th class="px-4 py-3 whitespace-nowrap">Nome do Cliente</th>
+                            <th class="px-4 py-3 whitespace-nowrap">Contato (Tel/Email)</th>
+                            <th class="px-4 py-3 whitespace-nowrap">Veículo (Modelo / Placa / Ano)</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-brand-border">
+                        <!-- Empty State -->
+                        <tr th:if="${#lists.isEmpty(clientes)}">
+                            <td colspan="5" class="px-4 py-6 text-center text-gray-500 italic">
+                                Nenhum cliente cadastrado no momento. Clique em "Novo Cliente" para adicionar.
+                            </td>
+                        </tr>
+                        <!-- Loop Clients -->
+                        <tr th:each="c : ${clientes}" class="hover:bg-neutral-900/40 transition-colors">
+                            <td class="px-4 py-3 font-mono text-xs text-brand-neon whitespace-nowrap" th:text="${c.id}">1</td>
+                            <td class="px-4 py-3 font-semibold text-white whitespace-nowrap" th:text="${c.nome}">João da Silva</td>
+                            <td class="px-4 py-3 text-xs whitespace-nowrap">
+                                <div class="text-white" th:text="${c.telefone}">(11) 99999-9999</div>
+                                <div class="text-gray-500 font-mono mt-0.5" th:text="${c.email}">joao@email.com</div>
+                            </td>
+                            <td class="px-4 py-3 text-xs whitespace-nowrap">
+                                <div class="text-white flex items-center space-x-1.5">
+                                    <svg class="w-3.5 h-3.5 text-brand-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+                                    </svg>
+                                    <span th:text="${c.veiculoModelo}">Honda Civic</span>
+                                </div>
+                                <div class="mt-1 flex items-center space-x-2">
+                                    <span class="bg-neutral-900 border border-brand-border text-gray-400 font-mono px-1.5 py-0.5 rounded text-[10px]" th:text="${c.veiculoPlaca}">ABC-1234</span>
+                                    <span class="text-gray-500 text-[10px]" th:text="${'Ano: ' + c.veiculoAno}">Ano: 2020</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-right space-x-2 text-xs font-medium whitespace-nowrap">
+                                <a th:href="@{/clientes/editar/{id}(id=${c.id})}" class="inline-flex items-center space-x-1 text-brand-neon hover:text-brand-orange bg-brand-orange/10 px-2 py-1 rounded border border-brand-orange/20 hover:border-brand-orange/50 transition-all">
+                                    <span>Editar</span>
+                                </a>
+                                <a th:href="@{/clientes/excluir/{id}(id=${c.id})}" class="inline-flex items-center space-x-1 text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-1 rounded border border-red-500/20 hover:border-red-500/50 transition-all"
+                                   onclick="return confirm('Tem certeza que deseja excluir este cliente?');">
+                                    <span>Excluir</span>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

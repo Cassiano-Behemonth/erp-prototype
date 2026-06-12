@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::#main-content})}">
+<head>
+    <title>Gerenciar OS - Piston & Wood</title>
+</head>
+<body>
+    <div id="main-content">
+        <!-- Breadcrumb / Header -->
+        <div class="mb-8">
+            <a href="/ordens" class="text-xs text-brand-neon hover:text-brand-orange flex items-center space-x-1 mb-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span>Voltar para Ordens de Serviço</span>
+            </a>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold font-numeric text-white tracking-wider" 
+                        th:text="${'GERENCIAR ORDEM #OS-' + ordem.id}">GERENCIAR ORDEM #OS-0</h1>
+                    <p class="text-xs text-gray-400 mt-1">Lançamento de insumos e conclusão física e financeira do serviço.</p>
+                </div>
+                <!-- Status Badge -->
+                <div class="mt-4 md:mt-0">
+                    <span class="px-4 py-2 rounded-lg font-semibold text-sm border font-numeric uppercase shadow-lg"
+                          th:classappend="${ordem.status.name() == 'EM_ANDAMENTO'} ? 'bg-amber-950/80 border-amber-800 text-amber-400 shadow-amber-950/20' : (${ordem.status.name() == 'CONCLUIDO'} ? 'bg-green-950/80 border-green-900 text-green-400 shadow-green-950/20' : 'bg-red-950/80 border-red-900 text-red-400 shadow-red-950/20')"
+                          th:text="${ordem.status.descricao}">
+                        Em Andamento
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification messages -->
+        <div th:if="${mensagemSucesso}" class="mb-6 p-4 bg-green-950/40 border border-green-900/60 text-green-300 text-xs rounded-lg shadow-md">
+            <span th:text="${mensagemSucesso}">Sucesso</span>
+        </div>
+        <div th:if="${mensagemErro}" class="mb-6 p-4 bg-red-950/40 border border-red-900/60 text-red-300 text-xs rounded-lg shadow-md">
+            <span th:text="${mensagemErro}">Erro</span>
+        </div>
+
+        <!-- MAIN LAYOUT: DETAILS PANEL + ITEMS AND ACTIONS -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            
+            <!-- COLUMN 1 & 2: SERVICE DETAILS & ITEMS LIST -->
+            <div class="xl:col-span-2 space-y-8">
+                
+                <!-- OS Details -->
+                <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl p-6">
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-brand-neon uppercase border-b border-brand-border pb-3 mb-4">
+                        Detalhes do Serviço
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                        <!-- Cliente Info -->
+                        <div>
+                            <span class="text-xs text-gray-500 block">Cliente</span>
+                            <strong class="text-white text-base" th:text="${ordem.cliente.nome}">Guilherme Almeida</strong>
+                            <div class="text-xs text-gray-400 mt-1" th:text="${ordem.cliente.telefone + ' | ' + ordem.cliente.email}"></div>
+                        </div>
+
+                        <!-- Veículo Info -->
+                        <div>
+                            <span class="text-xs text-gray-500 block">Veículo cadastrado</span>
+                            <strong class="text-white flex items-center space-x-1.5 mt-0.5">
+                                <svg class="w-4 h-4 text-brand-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+                                </svg>
+                                <span th:text="${ordem.cliente.veiculoModelo}">Honda Civic</span>
+                            </strong>
+                            <div class="mt-1 flex items-center space-x-2">
+                                <span class="bg-neutral-900 border border-brand-border text-gray-400 font-mono px-1.5 py-0.5 rounded text-[10px] uppercase" th:text="${ordem.cliente.veiculoPlaca}">ABC1D23</span>
+                                <span class="text-gray-500 text-[10px]" th:text="${'Ano: ' + ordem.cliente.veiculoAno}">Ano: 2020</span>
+                            </div>
+                        </div>
+
+                        <!-- Categoria & Data -->
+                        <div>
+                            <span class="text-xs text-gray-500 block">Especialidade / Serviço</span>
+                            <span class="text-white font-medium" th:text="${ordem.servicoCategoria.descricao}">Personalização</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500 block">Abertura da OS</span>
+                            <span class="text-gray-300 font-mono" th:text="${#temporals.format(ordem.data, 'dd/MM/yyyy HH:mm')}">12/06/2026 10:30</span>
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="md:col-span-2 bg-neutral-900/60 p-4 border border-brand-border rounded-lg mt-2">
+                            <span class="text-xs text-gray-500 block mb-1 font-semibold uppercase">Diagnóstico / Escopo do Serviço</span>
+                            <p class="text-xs text-gray-300 whitespace-pre-line leading-relaxed" th:text="${ordem.descricaoServico}">Descrição do serviço...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consumed items / Parts used -->
+                <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl overflow-hidden">
+                    <div class="p-6 border-b border-brand-border flex items-center justify-between">
+                        <h3 class="text-xs font-semibold font-numeric tracking-wider text-white uppercase">
+                            Peças & Insumos Utilizados
+                        </h3>
+                        <span class="text-xs font-mono text-brand-neon" 
+                              th:text="${ordem.itensEstoqueUtilizados.size() + ' itens vinculados'}">
+                            0 itens
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-300">
+                            <thead class="bg-neutral-900/50 text-[10px] uppercase font-numeric tracking-wider border-b border-brand-border text-gray-400">
+                                <tr>
+                                    <th class="px-6 py-4">Peça / Insumo</th>
+                                    <th class="px-6 py-4 text-center">Quantidade</th>
+                                    <th class="px-6 py-4">Preço Unitário</th>
+                                    <th class="px-6 py-4 text-right">Subtotal</th>
+                                    <th th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="px-6 py-4 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border">
+                                <tr th:if="${#lists.isEmpty(ordem.itensEstoqueUtilizados)}">
+                                    <td th:colspan="${ordem.status.name() == 'EM_ANDAMENTO' ? 5 : 4}" class="px-6 py-8 text-center text-gray-500 italic">
+                                        Nenhuma peça ou insumo de estoque foi vinculado a esta ordem de serviço ainda.
+                                    </td>
+                                </tr>
+                                <tr th:each="item : ${ordem.itensEstoqueUtilizados}" class="hover:bg-neutral-900/40 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-white" th:text="${item.produto.nome}">Insulfilm G20</td>
+                                    <td class="px-6 py-4 text-center font-mono text-white" th:text="${item.quantidade}">2</td>
+                                    <td class="px-6 py-4 font-mono text-xs text-gray-400" th:text="${'R$ ' + #numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 50,00</td>
+                                    <td class="px-6 py-4 text-right font-mono font-bold text-brand-neon" th:text="${'R$ ' + #numbers.formatDecimal(item.quantidade * item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 100,00</td>
+                                    <td th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="px-6 py-4 text-right">
+                                        <form th:action="@{/ordens/{id}/itens/{itemId}/excluir(id=${ordem.id}, itemId=${item.id})}" method="POST" class="inline"
+                                              onsubmit="return confirm('Remover esta peça da Ordem de Serviço?');">
+                                            <button type="submit" class="text-red-400 hover:text-red-300 bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20 hover:border-red-500/50 transition-all text-xs font-semibold">
+                                                Remover
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <!-- Subtotal items row -->
+                                <tr th:unless="${#lists.isEmpty(ordem.itensEstoqueUtilizados)}" class="bg-neutral-900/20 font-semibold text-gray-300">
+                                    <td th:colspan="${ordem.status.name() == 'EM_ANDAMENTO' ? 4 : 3}" class="px-6 py-4 text-right uppercase text-xs font-numeric tracking-wider">Faturamento de Peças:</td>
+                                    <!-- calculate sum of products total -->
+                                    <td class="px-6 py-4 text-right font-mono text-brand-neon" 
+                                        th:text="${'R$ ' + #numbers.formatDecimal(ordem.itensEstoqueTotal, 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 0,00
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMN 3: SIDE ACTIONS PANEL (PEÇA ADDITION & OS CLOSING) -->
+            <div class="space-y-8">
+                
+                <!-- FINANCES OVERVIEW CARD -->
+                <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl p-6 relative overflow-hidden">
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-white uppercase border-b border-brand-border pb-3 mb-4">
+                        Resumo Financeiro
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">Total em Peças/Insumos:</span>
+                            <span class="text-white font-mono" 
+                                  th:text="${'R$ ' + #numbers.formatDecimal(ordem.itensEstoqueTotal, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 0,00
+                            </span>
+                        </div>
+                        <div class="flex justify-between text-xs border-b border-brand-border pb-3">
+                            <span class="text-gray-400">Mão de Obra / Serviço:</span>
+                            <!-- Labor is calculated as Total minus items cost -->
+                            <span class="text-white font-mono"
+                                  th:text="${'R$ ' + #numbers.formatDecimal(ordem.maoDeObraValor, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 350,00
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-xs font-numeric font-semibold text-white uppercase">Valor Geral da OS:</span>
+                            <span class="text-xl font-bold font-numeric text-brand-neon" 
+                                  th:text="${'R$ ' + #numbers.formatDecimal(ordem.valorTotal, 1, 'POINT', 2, 'COMMA')}">
+                                R$ 350,00
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADD PART FORM (ONLY IF EM_ANDAMENTO) -->
+                <div th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="bg-brand-panel border border-brand-border rounded-xl shadow-xl p-6">
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-white uppercase border-b border-brand-border pb-3 mb-4 flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-brand-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                        </svg>
+                        <span>VINCULAR INSUMO / PEÇA</span>
+                    </h3>
+                    <p class="text-xs text-gray-400 mb-4">Selecione peças do estoque utilizadas neste serviço. O valor será acrescido à OS.</p>
+                    
+                    <form th:action="@{/ordens/{id}/itens(id=${ordem.id})}" method="POST" class="space-y-4">
+                        <!-- Select Part -->
+                        <div>
+                            <label for="produtoId" class="block text-xs font-medium text-gray-400 mb-1.5">Peça / Produto</label>
+                            <select id="produtoId" name="produtoId" required
+                                    class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-3 py-2 text-xs outline-none transition-colors">
+                                <option value="" disabled selected>Selecione a peça...</option>
+                                <option th:each="p : ${produtos}" th:value="${p.id}"
+                                        th:text="${p.nome + ' (Estoque: ' + p.quantidadeEstoque + ' | R$ ' + p.precoVenda + ')'}"></option>
+                            </select>
+                        </div>
+                        
+                        <!-- Quantidade -->
+                        <div>
+                            <label for="quantidade" class="block text-xs font-medium text-gray-400 mb-1.5">Quantidade Utilizada</label>
+                            <input type="number" id="quantidade" name="quantidade" min="1" value="1" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-3 py-2 text-xs outline-none transition-colors font-mono">
+                        </div>
+
+                        <!-- Submit -->
+                        <div>
+                            <button type="submit" class="w-full bg-neutral-900 hover:bg-neutral-800 text-brand-neon hover:text-white font-semibold text-xs py-2.5 rounded-lg border border-brand-neon/40 hover:border-brand-neon transition-all font-numeric uppercase tracking-wider">
+                                Vincular Peça
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- OS PROCESS ACTIONS CARD -->
+                <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl p-6 space-y-4">
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-white uppercase border-b border-brand-border pb-3 mb-2">
+                        Processamento da Ordem
+                    </h3>
+
+                    <!-- EM ANDAMENTO ACTIONS -->
+                    <div th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="space-y-3">
+                        <p class="text-xs text-gray-400 leading-relaxed">
+                            Ao concluir, o sistema dará baixa física nos produtos do estoque e consolidará o faturamento.
+                        </p>
+                        
+                        <!-- Form Concluir -->
+                        <form th:action="@{/ordens/{id}/concluir(id=${ordem.id})}" method="POST"
+                              onsubmit="return confirm('Confirmar conclusão da Ordem de Serviço? O estoque correspondente será reduzido.');">
+                            <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-bold text-xs py-3 rounded-lg shadow-lg font-numeric tracking-wide transition-all uppercase">
+                                Finalizar & Concluir OS
+                            </button>
+                        </form>
+
+                        <!-- Form Cancelar -->
+                        <form th:action="@{/ordens/{id}/cancelar(id=${ordem.id})}" method="POST"
+                              onsubmit="return confirm('Deseja realmente CANCELAR esta OS? Os itens vinculados não sofrerão alteração.');">
+                            <button type="submit" class="w-full bg-neutral-900 hover:bg-red-950/20 text-red-400 hover:text-red-300 font-semibold text-xs py-3 rounded-lg border border-brand-border hover:border-red-500/30 transition-all font-numeric uppercase">
+                                Cancelar Ordem
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- CONCLUIDA BANNER -->
+                    <div th:if="${ordem.status.name() == 'CONCLUIDO'}" class="p-4 bg-green-950/20 border border-green-900/40 rounded-lg text-green-300 text-xs text-center space-y-2">
+                        <svg class="w-8 h-8 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <strong>Ordem Concluída com Sucesso!</strong>
+                        <p class="text-[10px] text-green-400/80 leading-relaxed">Faturamento computado e estoque baixado. O histórico agora está trancado para alterações.</p>
+                    </div>
+
+                    <!-- CANCELADA BANNER -->
+                    <div th:if="${ordem.status.name() == 'CANCELADO'}" class="p-4 bg-red-950/20 border border-red-900/40 rounded-lg text-red-300 text-xs text-center space-y-2">
+                        <svg class="w-8 h-8 text-red-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <strong>Ordem Cancelada</strong>
+                        <p class="text-[10px] text-red-400/80 leading-relaxed">Nenhuma baixa de estoque ou faturamento foi aplicado. O histórico está trancado.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

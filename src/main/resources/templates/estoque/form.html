@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::#main-content})}">
+<head>
+    <title>Cadastro de Insumo - Piston & Wood</title>
+</head>
+<body>
+    <div id="main-content" class="max-w-3xl mx-auto">
+        <!-- Breadcrumb / Header -->
+        <div class="mb-8">
+            <a href="/estoque" class="text-xs text-brand-neon hover:text-brand-orange flex items-center space-x-1 mb-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span>Voltar para Estoque</span>
+            </a>
+            <h1 class="text-2xl font-bold font-numeric text-white tracking-wider"
+                th:text="${produto.id == null} ? 'CADASTRAR NOVO INSUMO' : 'EDITAR INSUMO'">CADASTRO DE INSUMO</h1>
+            <p class="text-xs text-gray-400 mt-1">Defina o nome, descrição, custos e preços de venda para o item do estoque.</p>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl p-6 md:p-8">
+            <form th:action="@{/estoque}" th:object="${produto}" method="POST" class="space-y-6">
+                <!-- Hidden ID for update -->
+                <input type="hidden" th:field="*{id}">
+
+                <!-- Seção 1: Dados do Insumo -->
+                <div>
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-brand-neon uppercase border-b border-brand-border pb-2 mb-4">
+                        1. Informações Básicas
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Nome -->
+                        <div class="md:col-span-2">
+                            <label for="nome" class="block text-xs font-medium text-gray-400 mb-1.5">Nome do Insumo / Peça</label>
+                            <input type="text" id="nome" th:field="*{nome}" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors"
+                                   placeholder="Ex: MDF Naval 15mm, Película Insulfilm G20, Alto-falante 6x9">
+                        </div>
+                        <!-- Descrição -->
+                        <div class="md:col-span-2">
+                            <label for="descricao" class="block text-xs font-medium text-gray-400 mb-1.5">Descrição / Finalidade</label>
+                            <textarea id="descricao" th:field="*{descricao}" rows="3"
+                                      class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors"
+                                      placeholder="Ex: Usado na marcenaria automotiva para acabamento de porta-malas."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 2: Estoque e Preços -->
+                <div class="pt-4">
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-brand-neon uppercase border-b border-brand-border pb-2 mb-4">
+                        2. Controle de Valores & Níveis de Estoque
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                        <!-- Estoque Inicial -->
+                        <div>
+                            <label for="quantidadeEstoque" class="block text-xs font-medium text-gray-400 mb-1.5">Qtd Inicial</label>
+                            <!-- Disable stock field if updating so they don't manually alter stock values without recording input -->
+                            <input type="number" id="quantidadeEstoque" th:field="*{quantidadeEstoque}" required min="0"
+                                   th:disabled="${produto.id != null}"
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors font-mono disabled:opacity-50 disabled:cursor-not-allowed"
+                                   placeholder="0">
+                            <!-- Hidden input in case field is disabled, so Spring receives the value -->
+                            <input type="hidden" th:if="${produto.id != null}" th:field="*{quantidadeEstoque}">
+                            <p th:if="${produto.id != null}" class="text-[9px] text-gray-500 mt-1">Para adicionar estoque, use a tela de listagem.</p>
+                        </div>
+                        
+                        <!-- Alerta Mínimo -->
+                        <div>
+                            <label for="alertaEstoqueMinimo" class="block text-xs font-medium text-gray-400 mb-1.5">Alerta Mínimo</label>
+                            <input type="number" id="alertaEstoqueMinimo" th:field="*{alertaEstoqueMinimo}" required min="0"
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors font-mono"
+                                   placeholder="3">
+                        </div>
+
+                        <!-- Preço de Custo -->
+                        <div>
+                            <label for="precoCusto" class="block text-xs font-medium text-gray-400 mb-1.5">Preço Custo (R$)</label>
+                            <input type="number" step="0.01" id="precoCusto" th:field="*{precoCusto}" required min="0"
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors font-mono"
+                                   placeholder="50.00">
+                        </div>
+
+                        <!-- Preço de Venda -->
+                        <div>
+                            <label for="precoVenda" class="block text-xs font-medium text-gray-400 mb-1.5">Preço Venda (R$)</label>
+                            <input type="number" step="0.01" id="precoVenda" th:field="*{precoVenda}" required min="0"
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors font-mono"
+                                   placeholder="100.00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit buttons -->
+                <div class="pt-6 border-t border-brand-border flex items-center justify-end space-x-4">
+                    <a href="/estoque" class="bg-neutral-800 hover:bg-neutral-700 text-white font-medium text-xs px-5 py-3 rounded-lg transition-colors font-numeric">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="bg-gradient-to-r from-brand-orange to-brand-neon hover:from-brand-darkOrange hover:to-brand-orange text-black font-bold text-xs px-6 py-3 rounded-lg shadow-lg font-numeric tracking-wide transition-all duration-300">
+                        Salvar Insumo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

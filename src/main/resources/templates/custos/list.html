@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::#main-content})}">
+<head>
+    <title>Custos - Piston & Wood</title>
+</head>
+<body>
+    <div id="main-content">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold font-numeric text-white tracking-wider">CONTROLE DE CUSTOS</h1>
+                <p class="text-xs text-gray-400 mt-1">Monitore e registre custos fixos, variáveis e despesas operacionais da oficina.</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="/custos/novo" class="inline-flex items-center space-x-2 bg-gradient-to-r from-brand-orange to-brand-neon hover:from-brand-darkOrange hover:to-brand-orange text-black font-semibold text-xs px-4 py-2.5 rounded-lg shadow-lg font-numeric tracking-wide transition-all duration-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                    <span>Lançar Custo Manual</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- COSTS TABLE CARD -->
+        <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl overflow-hidden">
+            <div class="p-4 border-b border-brand-border flex items-center justify-between">
+                <h3 class="text-sm font-semibold font-numeric tracking-wider text-white">HISTÓRICO DE DESPESAS</h3>
+                <!-- Calculate total costs -->
+                <span class="text-xs font-mono text-red-500 font-bold whitespace-nowrap"
+                      th:text="${'Total: R$ ' + #numbers.formatDecimal(totalCustos, 1, 'POINT', 2, 'COMMA')}">
+                    Total: R$ 0,00
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-300">
+                    <thead class="bg-neutral-900/50 text-[10px] uppercase font-numeric tracking-wider border-b border-brand-border text-gray-400">
+                        <tr>
+                            <th class="px-4 py-3 whitespace-nowrap">ID</th>
+                            <th class="px-4 py-3 whitespace-nowrap">Descrição da Despesa</th>
+                            <th class="px-4 py-3 whitespace-nowrap">Tipo</th>
+                            <th class="px-4 py-3 whitespace-nowrap">Data de Lançamento</th>
+                            <th class="px-4 py-3 whitespace-nowrap">Valor</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-brand-border">
+                        <!-- Empty State -->
+                        <tr th:if="${#lists.isEmpty(custos)}">
+                            <td colspan="6" class="px-4 py-6 text-center text-gray-500 italic">
+                                Nenhum custo ou despesa lançada até o momento.
+                            </td>
+                        </tr>
+                        <!-- Loop Costs -->
+                        <tr th:each="c : ${custos}" class="hover:bg-neutral-900/40 transition-colors">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 whitespace-nowrap" th:text="${c.id}">1</td>
+                            <td class="px-4 py-3 font-medium text-white" th:text="${c.descricao}">Aluguel do Galpão</td>
+                            <td class="px-4 py-3 text-xs whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded font-semibold text-[10px] whitespace-nowrap"
+                                      th:classappend="${c.tipo.name() == 'OPERACIONAL'} ? 'bg-amber-950/80 border border-amber-900 text-amber-400' : (${c.tipo.name() == 'INSUMO_ESTOQUE'} ? 'bg-cyan-950/80 border border-cyan-900 text-cyan-400' : 'bg-neutral-800 border border-neutral-700 text-neutral-300')"
+                                      th:text="${c.tipo.descricao}">
+                                    Operacional
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 font-mono text-xs text-gray-400 whitespace-nowrap" th:text="${#temporals.format(c.data, 'dd/MM/yyyy')}">12/06/2026</td>
+                            <td class="px-4 py-3 font-mono font-bold text-red-500 text-sm whitespace-nowrap" th:text="${'R$ ' + #numbers.formatDecimal(c.valor, 1, 'POINT', 2, 'COMMA')}">R$ 1.500,00</td>
+                            <td class="px-4 py-3 text-right text-xs whitespace-nowrap">
+                                <!-- Delete Button (only allow deleting operational/others manually, keep system stock logs but let them delete if they really want) -->
+                                <a th:href="@{/custos/excluir/{id}(id=${c.id})}" class="inline-flex items-center space-x-1 text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-1 rounded border border-red-500/20 hover:border-red-500/50 transition-all whitespace-nowrap"
+                                   onclick="return confirm('Tem certeza que deseja excluir esta despesa? Isso mudará o saldo do dashboard.');">
+                                    <span>Excluir</span>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

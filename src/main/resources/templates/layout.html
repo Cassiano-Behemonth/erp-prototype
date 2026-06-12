@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="page(bodyContent)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piston & Wood - Custom Garage ERP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#f57c00',
+                            darkOrange: '#e65100',
+                            neon: '#ff9800',
+                            darkbg: '#09090b',
+                            panel: '#18181b',
+                            border: '#27272a'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Orbitron & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+        }
+        .font-numeric {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Glassmorphism scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff9800;
+        }
+        /* Media query display overrides to guarantee layout behavior on CDN Tailwind */
+        @media (max-width: 767px) {
+            .mobile-hidden {
+                display: none !important;
+            }
+        }
+        @media (min-width: 768px) {
+            .desktop-hidden {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-200 text-sm min-h-screen flex flex-col md:flex-row">
+
+    <!-- Mobile Top Bar -->
+    <div class="desktop-hidden bg-brand-panel border-b border-brand-border p-4 flex items-center justify-between z-30 sticky top-0">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-gradient-to-tr from-brand-orange to-brand-neon rounded-lg text-black font-bold font-numeric text-xs shadow-md">
+                PW
+            </div>
+            <div>
+                <h1 class="text-xs font-semibold tracking-wider font-numeric text-white">PISTON & WOOD</h1>
+                <span class="text-[8px] text-brand-neon font-semibold uppercase tracking-widest font-numeric">Custom Garage</span>
+            </div>
+        </div>
+        <!-- Hamburger Button -->
+        <button onclick="toggleSidebar()" class="p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-1 focus:ring-brand-neon rounded transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="mobile-hidden flex w-full md:w-48 xl:w-56 bg-brand-panel border-b md:border-b-0 md:border-r border-brand-border flex-col justify-between shrink-0 transition-all duration-300">
+        <div>
+            <!-- Shop Logo & Name (Desktop only layout display) -->
+            <div class="p-4 border-b border-brand-border flex items-center space-x-2">
+                <div class="p-1.5 bg-gradient-to-tr from-brand-darkOrange to-brand-neon rounded-lg text-black font-bold font-numeric text-xs shadow-lg shadow-brand-orange/20">
+                    PW
+                </div>
+                <div>
+                    <h1 class="text-xs font-semibold tracking-wider font-numeric text-white">PISTON & WOOD</h1>
+                    <span class="text-[9px] text-brand-neon font-semibold uppercase tracking-widest font-numeric">Custom Garage</span>
+                </div>
+            </div>
+
+            <!-- Menu Navigation Links -->
+            <nav class="p-3 space-y-1">
+                <a href="/dashboard" class="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:bg-neutral-800 hover:text-white"
+                   th:classappend="${currentURI == '/' or currentURI == '/dashboard'} ? 'bg-gradient-to-r from-brand-orange/20 to-transparent border-l-4 border-brand-neon text-white' : 'text-gray-400'">
+                    <!-- Icon Dashboard -->
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="/clientes" class="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:bg-neutral-800 hover:text-white"
+                   th:classappend="${currentURI?.startsWith('/clientes')} ? 'bg-gradient-to-r from-brand-orange/20 to-transparent border-l-4 border-brand-neon text-white' : 'text-gray-400'">
+                    <!-- Icon Users -->
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span>Clientes & Veículos</span>
+                </a>
+
+                <a href="/estoque" class="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:bg-neutral-800 hover:text-white"
+                   th:classappend="${currentURI?.startsWith('/estoque')} ? 'bg-gradient-to-r from-brand-orange/20 to-transparent border-l-4 border-brand-neon text-white' : 'text-gray-400'">
+                    <!-- Icon Database -->
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    <span>Estoque de Insumos</span>
+                </a>
+
+                <a href="/ordens" class="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:bg-neutral-800 hover:text-white"
+                   th:classappend="${currentURI?.startsWith('/ordens')} ? 'bg-gradient-to-r from-brand-orange/20 to-transparent border-l-4 border-brand-neon text-white' : 'text-gray-400'">
+                    <!-- Icon Briefcase -->
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    <span>Ordens de Serviço</span>
+                </a>
+
+                <a href="/custos" class="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:bg-neutral-800 hover:text-white"
+                   th:classappend="${currentURI?.startsWith('/custos')} ? 'bg-gradient-to-r from-brand-orange/20 to-transparent border-l-4 border-brand-neon text-white' : 'text-gray-400'">
+                    <!-- Icon Cash -->
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Controle de Custos</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- System Footer Info -->
+        <div class="p-4 border-t border-brand-border">
+            <div class="flex items-center space-x-2 text-xs text-gray-500">
+                <span class="w-2 bg-green-500 rounded-full animate-ping"></span>
+                <span>Servidor Local H2</span>
+            </div>
+            <p class="text-[9px] text-gray-600 mt-2">v1.0.0 Protótipo ERP</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col min-w-0">
+        <!-- Top bar/Header -->
+        <header class="mobile-hidden flex h-12 border-b border-brand-border bg-brand-panel/50 backdrop-blur-md items-center justify-between px-4 md:px-6 shrink-0 z-10">
+            <h2 class="text-xs font-medium text-gray-400">
+                Sistema Integrado de Gestão Comercial
+            </h2>
+            <div class="flex items-center space-x-4">
+                <span class="text-[10px] text-gray-400 bg-neutral-900 px-3 py-1 border border-brand-border rounded-full font-mono">
+                    2026 ERP-Core
+                </span>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Body -->
+        <div class="flex-1 p-4 md:p-6 overflow-y-auto">
+            <div th:replace="${bodyContent}"></div>
+        </div>
+    </main>
+
+    <!-- Script to toggle sidebar on mobile -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-hidden');
+        }
+    </script>
+
+</body>
+</html>

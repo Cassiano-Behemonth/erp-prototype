@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::#main-content})}">
+<head>
+    <title>Cadastro de Cliente - Piston & Wood</title>
+</head>
+<body>
+    <div id="main-content" class="max-w-3xl mx-auto">
+        <!-- Breadcrumb / Header -->
+        <div class="mb-8">
+            <a href="/clientes" class="text-xs text-brand-neon hover:text-brand-orange flex items-center space-x-1 mb-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span>Voltar para Clientes</span>
+            </a>
+            <h1 class="text-2xl font-bold font-numeric text-white tracking-wider"
+                th:text="${cliente.id == null} ? 'CADASTRAR NOVO CLIENTE' : 'EDITAR CLIENTE'">CADASTRO DE CLIENTE</h1>
+            <p class="text-xs text-gray-400 mt-1">Insira os dados do cliente e as informações do veículo para ordens de serviço.</p>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl p-6 md:p-8">
+            <form th:action="@{/clientes}" th:object="${cliente}" method="POST" class="space-y-6">
+                <!-- Hidden ID for update -->
+                <input type="hidden" th:field="*{id}">
+
+                <!-- Seção 1: Dados Pessoais -->
+                <div>
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-brand-neon uppercase border-b border-brand-border pb-2 mb-4">
+                        1. Dados do Cliente
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Nome -->
+                        <div class="md:col-span-2">
+                            <label for="nome" class="block text-xs font-medium text-gray-400 mb-1.5">Nome Completo</label>
+                            <input type="text" id="nome" th:field="*{nome}" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors"
+                                   placeholder="Nome Completo do Cliente">
+                        </div>
+                        <!-- Telefone -->
+                        <div>
+                            <label for="telefone" class="block text-xs font-medium text-gray-400 mb-1.5">Telefone de Contato</label>
+                            <input type="text" id="telefone" th:field="*{telefone}" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors"
+                                   placeholder="(00) 00000-0000">
+                        </div>
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-xs font-medium text-gray-400 mb-1.5">E-mail</label>
+                            <input type="email" id="email" th:field="*{email}" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors"
+                                   placeholder="cliente@email.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 2: Dados do Veículo -->
+                <div class="pt-4">
+                    <h3 class="text-xs font-semibold font-numeric tracking-wider text-brand-neon uppercase border-b border-brand-border pb-2 mb-4">
+                        2. Dados do Veículo
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Modelo do Veículo -->
+                        <div class="md:col-span-2">
+                            <label for="veiculoModelo" class="block text-xs font-medium text-gray-400 mb-1.5">Modelo / Marca / Cor</label>
+                            <input type="text" id="veiculoModelo" th:field="*{veiculoModelo}" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors"
+                                   placeholder="Ex: Honda Civic Sport Preto">
+                        </div>
+                        <!-- Placa do Veículo -->
+                        <div>
+                            <label for="veiculoPlaca" class="block text-xs font-medium text-gray-400 mb-1.5">Placa</label>
+                            <input type="text" id="veiculoPlaca" th:field="*{veiculoPlaca}" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors font-mono uppercase"
+                                   placeholder="ABC1D23">
+                        </div>
+                        <!-- Ano do Veículo -->
+                        <div>
+                            <label for="veiculoAno" class="block text-xs font-medium text-gray-400 mb-1.5">Ano de Fabricação</label>
+                            <input type="text" id="veiculoAno" th:field="*{veiculoAno}" required
+                                   class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors font-mono"
+                                   placeholder="Ex: 2021">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit buttons -->
+                <div class="pt-6 border-t border-brand-border flex items-center justify-end space-x-4">
+                    <a href="/clientes" class="bg-neutral-800 hover:bg-neutral-700 text-white font-medium text-xs px-5 py-3 rounded-lg transition-colors font-numeric">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="bg-gradient-to-r from-brand-orange to-brand-neon hover:from-brand-darkOrange hover:to-brand-orange text-black font-bold text-xs px-6 py-3 rounded-lg shadow-lg font-numeric tracking-wide transition-all duration-300">
+                        Salvar Cadastro
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

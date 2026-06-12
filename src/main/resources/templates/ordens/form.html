@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::#main-content})}">
+<head>
+    <title>Abertura de OS - Piston & Wood</title>
+</head>
+<body>
+    <div id="main-content" class="max-w-3xl mx-auto">
+        <!-- Breadcrumb / Header -->
+        <div class="mb-8">
+            <a href="/ordens" class="text-xs text-brand-neon hover:text-brand-orange flex items-center space-x-1 mb-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span>Voltar para OS</span>
+            </a>
+            <h1 class="text-2xl font-bold font-numeric text-white tracking-wider">ABRIR NOVA ORDEM DE SERVIÇO</h1>
+            <p class="text-xs text-gray-400 mt-1">Selecione o cliente, defina a categoria de serviço e lance a mão de obra inicial.</p>
+        </div>
+
+        <!-- Notification messages -->
+        <div th:if="${mensagemErro}" class="mb-6 p-4 bg-red-950/40 border border-red-900/60 text-red-300 text-xs rounded-lg shadow-md">
+            <span th:text="${mensagemErro}">Erro</span>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="bg-brand-panel border border-brand-border rounded-xl shadow-xl p-6 md:p-8">
+            <form th:action="@{/ordens}" th:object="${ordemServico}" method="POST" class="space-y-6">
+
+                <!-- Cliente & Categoria -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Cliente Dropdown -->
+                    <div>
+                        <label for="cliente" class="block text-xs font-medium text-gray-400 mb-1.5">Cliente & Veículo</label>
+                        <select id="cliente" th:field="*{cliente}" required
+                                class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors">
+                            <option value="" disabled selected>Selecione um cliente...</option>
+                            <option th:each="c : ${clientes}" th:value="${c.id}" 
+                                    th:text="${c.nome + ' - ' + c.veiculoModelo + ' (' + c.veiculoPlaca + ')'}"></option>
+                        </select>
+                        <p class="text-[10px] text-gray-500 mt-1">
+                            Não achou o cliente? <a href="/clientes/novo" class="text-brand-neon hover:underline">Cadastre um novo primeiro</a>.
+                        </p>
+                    </div>
+
+                    <!-- Categoria Dropdown -->
+                    <div>
+                        <label for="servicoCategoria" class="block text-xs font-medium text-gray-400 mb-1.5">Especialidade / Serviço</label>
+                        <select id="servicoCategoria" th:field="*{servicoCategoria}" required
+                                class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors">
+                            <option value="" disabled selected>Selecione a especialidade...</option>
+                            <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat.descricao}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Descrição detalhada do Serviço -->
+                <div>
+                    <label for="descricaoServico" class="block text-xs font-medium text-gray-400 mb-1.5">Descrição Detalhada do Problema / Serviço</label>
+                    <textarea id="descricaoServico" th:field="*{descricaoServico}" rows="4" required
+                              class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors"
+                              placeholder="Descreva detalhadamente o serviço que será prestado (ex: Customização do porta-malas em MDF naval com acabamento em couro sintético e montagem do rack de amplificadores)."></textarea>
+                </div>
+
+                <!-- Mão de Obra / Valor Básico -->
+                <div>
+                    <label for="valorTotal" class="block text-xs font-medium text-gray-400 mb-1.5">Valor Inicial da Mão de Obra (R$)</label>
+                    <input type="number" step="0.01" id="valorTotal" th:field="*{valorTotal}" required min="0"
+                           class="w-full bg-neutral-900 border border-brand-border focus:border-brand-neon text-white rounded-lg px-4 py-2.5 text-sm outline-none transition-colors font-mono"
+                           placeholder="Ex: 350.00">
+                    <p class="text-[10px] text-gray-500 mt-1">Insira o valor da mão de obra. Peças e insumos adicionados posteriormente se somarão a este valor.</p>
+                </div>
+
+                <!-- Submit buttons -->
+                <div class="pt-6 border-t border-brand-border flex items-center justify-end space-x-4">
+                    <a href="/ordens" class="bg-neutral-800 hover:bg-neutral-700 text-white font-medium text-xs px-5 py-3 rounded-lg transition-colors font-numeric">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="bg-gradient-to-r from-brand-orange to-brand-neon hover:from-brand-darkOrange hover:to-brand-orange text-black font-bold text-xs px-6 py-3 rounded-lg shadow-lg font-numeric tracking-wide transition-all duration-300">
+                        Abrir Ordem de Serviço
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
