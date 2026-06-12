@@ -28,7 +28,8 @@
                 <span class="text-xs font-mono text-brand-neon" th:text="${clientes.size() + ' registrados'}">0 registrados</span>
             </div>
 
-            <div class="overflow-x-auto">
+            <!-- Desktop View: Table -->
+            <div class="overflow-x-auto mobile-hidden">
                 <table class="w-full text-left text-sm text-gray-300">
                     <thead class="bg-neutral-900/50 text-[10px] uppercase font-numeric tracking-wider border-b border-brand-border text-gray-400">
                         <tr>
@@ -79,6 +80,46 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile View: Cards -->
+            <div class="desktop-hidden divide-y divide-brand-border">
+                <div th:if="${#lists.isEmpty(clientes)}" class="px-4 py-6 text-center text-gray-500 italic">
+                    Nenhum cliente cadastrado no momento.
+                </div>
+                <div th:each="c : ${clientes}" class="p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs text-brand-neon" th:text="${'#ID-' + c.id}">#ID-1</span>
+                        <span class="text-[10px] text-gray-500" th:text="${'Ano: ' + c.veiculoAno}">Ano: 2020</span>
+                    </div>
+                    <div class="space-y-0.5">
+                        <h4 class="font-bold text-white text-sm" th:text="${c.nome}">João da Silva</h4>
+                        <div class="text-[11px] text-gray-400 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span th:text="${c.telefone}">(11) 99999-9999</span>
+                            <span class="text-gray-600 mobile-hidden">|</span>
+                            <span class="font-mono text-[10px]" th:text="${c.email}">joao@email.com</span>
+                        </div>
+                    </div>
+                    <div class="bg-neutral-900/60 p-2 rounded border border-brand-border/40 flex items-center space-x-2 text-xs">
+                        <svg class="w-3.5 h-3.5 text-brand-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+                        </svg>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="font-medium text-white" th:text="${c.veiculoModelo}">Honda Civic</span>
+                            <span class="bg-neutral-950 border border-brand-border text-gray-400 font-mono px-1 py-0.5 rounded text-[9px]" th:text="${c.veiculoPlaca}">ABC-1234</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end space-x-2 pt-2">
+                        <a th:href="@{/clientes/editar/{id}(id=${c.id})}" class="inline-flex items-center space-x-1 text-brand-neon hover:text-brand-orange bg-brand-orange/10 px-2 py-1 rounded border border-brand-orange/20 hover:border-brand-orange/50 transition-all text-xs font-semibold">
+                            <span>Editar</span>
+                        </a>
+                        <a th:href="@{/clientes/excluir/{id}(id=${c.id})}" class="inline-flex items-center space-x-1 text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-1 rounded border border-red-500/20 hover:border-red-500/50 transition-all text-xs font-semibold"
+                           onclick="return confirm('Tem certeza que deseja excluir este cliente?');">
+                            <span>Excluir</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

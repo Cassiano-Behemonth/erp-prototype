@@ -104,15 +104,16 @@
                         </span>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <!-- Desktop View: Table -->
+                    <div class="overflow-x-auto mobile-hidden">
                         <table class="w-full text-left text-sm text-gray-300">
                             <thead class="bg-neutral-900/50 text-[10px] uppercase font-numeric tracking-wider border-b border-brand-border text-gray-400">
                                 <tr>
-                                    <th class="px-6 py-4">Peça / Insumo</th>
-                                    <th class="px-6 py-4 text-center">Quantidade</th>
-                                    <th class="px-6 py-4">Preço Unitário</th>
-                                    <th class="px-6 py-4 text-right">Subtotal</th>
-                                    <th th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="px-6 py-4 text-right">Ações</th>
+                                    <th class="px-6 py-4 whitespace-nowrap">Peça / Insumo</th>
+                                    <th class="px-6 py-4 text-center whitespace-nowrap">Quantidade</th>
+                                    <th class="px-6 py-4 whitespace-nowrap">Preço Unitário</th>
+                                    <th class="px-6 py-4 text-right whitespace-nowrap">Subtotal</th>
+                                    <th th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="px-6 py-4 text-right whitespace-nowrap">Ações</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-brand-border">
@@ -122,11 +123,11 @@
                                     </td>
                                 </tr>
                                 <tr th:each="item : ${ordem.itensEstoqueUtilizados}" class="hover:bg-neutral-900/40 transition-colors">
-                                    <td class="px-6 py-4 font-semibold text-white" th:text="${item.produto.nome}">Insulfilm G20</td>
-                                    <td class="px-6 py-4 text-center font-mono text-white" th:text="${item.quantidade}">2</td>
-                                    <td class="px-6 py-4 font-mono text-xs text-gray-400" th:text="${'R$ ' + #numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 50,00</td>
-                                    <td class="px-6 py-4 text-right font-mono font-bold text-brand-neon" th:text="${'R$ ' + #numbers.formatDecimal(item.quantidade * item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 100,00</td>
-                                    <td th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="px-6 py-4 text-right">
+                                    <td class="px-6 py-4 font-semibold text-white whitespace-nowrap" th:text="${item.produto.nome}">Insulfilm G20</td>
+                                    <td class="px-6 py-4 text-center font-mono text-white whitespace-nowrap" th:text="${item.quantidade}">2</td>
+                                    <td class="px-6 py-4 font-mono text-xs text-gray-400 whitespace-nowrap" th:text="${'R$ ' + #numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 50,00</td>
+                                    <td class="px-6 py-4 text-right font-mono font-bold text-brand-neon whitespace-nowrap" th:text="${'R$ ' + #numbers.formatDecimal(item.quantidade * item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 100,00</td>
+                                    <td th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" class="px-6 py-4 text-right whitespace-nowrap">
                                         <form th:action="@{/ordens/{id}/itens/{itemId}/excluir(id=${ordem.id}, itemId=${item.id})}" method="POST" class="inline"
                                               onsubmit="return confirm('Remover esta peça da Ordem de Serviço?');">
                                             <button type="submit" class="text-red-400 hover:text-red-300 bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20 hover:border-red-500/50 transition-all text-xs font-semibold">
@@ -146,6 +147,40 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile View: Cards -->
+                    <div class="desktop-hidden divide-y divide-brand-border">
+                        <div th:if="${#lists.isEmpty(ordem.itensEstoqueUtilizados)}" class="px-4 py-6 text-center text-gray-500 italic">
+                            Nenhuma peça ou insumo de estoque foi vinculado a esta ordem de serviço ainda.
+                        </div>
+                        <div th:each="item : ${ordem.itensEstoqueUtilizados}" class="p-4 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-white text-sm" th:text="${item.produto.nome}">Insulfilm G20</span>
+                                <span class="font-mono text-xs text-white" th:text="${'Qtd: ' + item.quantidade}">Qtd: 2</span>
+                            </div>
+                            <div class="flex justify-between text-xs font-mono">
+                                <span class="text-gray-500">Preço Unitário:</span>
+                                <span class="text-gray-400" th:text="${'R$ ' + #numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 50,00</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-1">
+                                <div class="font-mono text-brand-neon font-bold text-sm">
+                                    <span class="text-[9px] text-gray-500 font-sans font-normal">Subtotal:</span>
+                                    <span th:text="${'R$ ' + #numbers.formatDecimal(item.quantidade * item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 100,00</span>
+                                </div>
+                                <form th:if="${ordem.status.name() == 'EM_ANDAMENTO'}" th:action="@{/ordens/{id}/itens/{itemId}/excluir(id=${ordem.id}, itemId=${item.id})}" method="POST" class="inline"
+                                      onsubmit="return confirm('Remover esta peça da Ordem de Serviço?');">
+                                    <button type="submit" class="text-red-400 hover:text-red-300 bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20 hover:border-red-500/50 transition-all text-xs font-semibold">
+                                        Remover
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Mobile Subtotal -->
+                        <div th:unless="${#lists.isEmpty(ordem.itensEstoqueUtilizados)}" class="p-4 bg-neutral-900/40 flex justify-between items-center text-xs font-semibold text-gray-300">
+                            <span class="uppercase font-numeric tracking-wider">Faturamento de Peças:</span>
+                            <span class="font-mono text-brand-neon text-sm" th:text="${'R$ ' + #numbers.formatDecimal(ordem.itensEstoqueTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                        </div>
                     </div>
                 </div>
 

@@ -86,7 +86,7 @@ public class OrdemServicoController {
             double novoTotal = os.getValorTotal() + (item.getQuantidade() * item.getPrecoUnitario());
             os.setValorTotal(novoTotal);
             
-            osService.criar(os); // Atualiza no banco
+            osService.atualizarItens(os); // Atualiza no banco sem disparar email
             redirectAttributes.addFlashAttribute("mensagemSucesso", "Item adicionado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao adicionar item: " + e.getMessage());
@@ -114,7 +114,7 @@ public class OrdemServicoController {
             // Remove o item da lista
             os.getItensEstoqueUtilizados().remove(itemARemover);
             
-            osService.criar(os); // Atualiza no banco (com cascade orphanRemoval ele será deletado)
+            osService.atualizarItens(os); // Atualiza no banco sem disparar email
             redirectAttributes.addFlashAttribute("mensagemSucesso", "Item removido com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao remover item: " + e.getMessage());
@@ -142,27 +142,5 @@ public class OrdemServicoController {
             redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao cancelar Ordem: " + e.getMessage());
         }
         return "redirect:/ordens/" + id;
-    }
-
-    @GetMapping("/limpar-banco")
-    public String limparBanco(RedirectAttributes redirectAttributes) {
-        try {
-            osService.resetarTodas();
-            redirectAttributes.addFlashAttribute("mensagemSucesso", "Todas as Ordens de Serviço foram deletadas!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao limpar banco: " + e.getMessage());
-        }
-        return "redirect:/ordens";
-    }
-
-    @GetMapping("/gerar-simuladas")
-    public String gerarSimuladas(RedirectAttributes redirectAttributes) {
-        try {
-            dataLoader.carregarOrdensMock();
-            redirectAttributes.addFlashAttribute("mensagemSucesso", "Novas Ordens de Serviço simuladas foram geradas com sucesso!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao gerar OS simuladas: " + e.getMessage());
-        }
-        return "redirect:/ordens";
     }
 }

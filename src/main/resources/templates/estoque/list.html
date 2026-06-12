@@ -39,7 +39,8 @@
                     <span class="text-xs font-mono text-brand-neon" th:text="${produtos.size() + ' itens'}">0 itens</span>
                 </div>
 
-                <div class="overflow-x-auto">
+                <!-- Desktop View: Table -->
+                <div class="overflow-x-auto mobile-hidden">
                     <table class="w-full text-left text-sm text-gray-300">
                         <thead class="bg-neutral-900/50 text-[10px] uppercase font-numeric tracking-wider border-b border-brand-border text-gray-400">
                             <tr>
@@ -88,6 +89,44 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile View: Cards -->
+                <div class="desktop-hidden divide-y divide-brand-border">
+                    <div th:if="${#lists.isEmpty(produtos)}" class="px-4 py-6 text-center text-gray-500 italic">
+                        Nenhum insumo ou peça cadastrado no momento.
+                    </div>
+                    <div th:each="p : ${produtos}" class="p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-white text-sm" th:text="${p.nome}">MDF Naval 15mm</span>
+                            <div class="flex items-center space-x-1.5">
+                                <span class="font-bold font-numeric text-xs"
+                                      th:class="${p.quantidadeEstoque <= p.alertaEstoqueMinimo} ? 'text-red-500' : 'text-white'"
+                                      th:text="${p.quantidadeEstoque + ' un'}">10 un</span>
+                                <span th:if="${p.quantidadeEstoque <= p.alertaEstoqueMinimo}" 
+                                      class="px-1.5 py-0.5 bg-red-950/80 border border-red-900 text-red-400 text-[8px] rounded uppercase font-semibold">
+                                    Baixo
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-gray-500 mt-0.5" th:text="${p.descricao}">Usado em Marcenaria Automotiva</div>
+                        <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                            <div class="bg-neutral-900/60 p-2 rounded border border-brand-border/40 font-mono">
+                                <div class="text-[9px] text-gray-500 uppercase">Preço Custo</div>
+                                <div class="text-red-400 font-bold" th:text="${'R$ ' + #numbers.formatDecimal(p.precoCusto, 1, 'POINT', 2, 'COMMA')}">R$ 50,00</div>
+                            </div>
+                            <div class="bg-neutral-900/60 p-2 rounded border border-brand-border/40 font-mono">
+                                <div class="text-[9px] text-gray-500 uppercase">Preço Venda</div>
+                                <div class="text-brand-neon font-bold" th:text="${'R$ ' + #numbers.formatDecimal(p.precoVenda, 1, 'POINT', 2, 'COMMA')}">R$ 100,00</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-[9px] text-gray-500 font-mono" th:text="${'Mínimo: ' + p.alertaEstoqueMinimo + ' un'}">Mínimo: 3</span>
+                            <a th:href="@{/estoque/editar/{id}(id=${p.id})}" class="inline-flex items-center space-x-1 text-brand-neon hover:text-brand-orange bg-brand-orange/10 px-2 py-1 rounded border border-brand-orange/20 hover:border-brand-orange/50 transition-all text-xs font-semibold">
+                                <span>Editar</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 

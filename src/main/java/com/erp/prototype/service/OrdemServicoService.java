@@ -17,11 +17,15 @@ public class OrdemServicoService {
 
     private final OrdemServicoRepository osRepository;
     private final ProdutoRepository produtoRepository;
+    private final EmailService emailService;
 
     @Autowired
-    public OrdemServicoService(OrdemServicoRepository osRepository, ProdutoRepository produtoRepository) {
+    public OrdemServicoService(OrdemServicoRepository osRepository,
+                               ProdutoRepository produtoRepository,
+                               EmailService emailService) {
         this.osRepository = osRepository;
         this.produtoRepository = produtoRepository;
+        this.emailService = emailService;
     }
 
     public List<OrdemServico> listarTodas() {
@@ -45,6 +49,26 @@ public class OrdemServicoService {
             item.setOrdemServico(os);
         }
         
+        OrdemServico osSalva = osRepository.save(os);
+
+        // Enviar email de abertura da OS (erro não bloqueia o fluxo)
+        try {
+            emailService.sendEmailAbertura(osSalva);
+        } catch (Exception e) {
+            System.err.println("[OS] Falha ao enviar email de abertura: " + e.getMessage());
+        }
+
+        return osSalva;
+    }
+
+    /**
+     * Atualiza uma OS já existente (ao adicionar/remover itens) sem disparar email.
+     */
+    @Transactional
+    public OrdemServico atualizarItens(OrdemServico os) {
+        for (OSItem item : os.getItensEstoqueUtilizados()) {
+            item.setOrdemServico(os);
+        }
         return osRepository.save(os);
     }
 
@@ -71,6 +95,13 @@ public class OrdemServicoService {
 
         os.setStatus(OrdemServicoStatus.CONCLUIDO);
         osRepository.save(os);
+
+        // Enviar email de conclusão da OS (erro não bloqueia o fluxo)
+        try {
+            emailService.sendEmailConclusao(os);
+        } catch (Exception e) {
+            System.err.println("[OS] Falha ao enviar email de conclusão: " + e.getMessage());
+        }
     }
 
     @Transactional
